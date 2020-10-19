@@ -5,25 +5,19 @@ class Pokemons extends Component {
     constructor(props) {
     	super(props);
 	this.state = {
-	    spreadsheet_url: "https://spreadsheets.google.com/feeds/list/1r8aQnd1ZPrGkccv_6yHTfAG7uUBf1Kh4ONeo6BQpMn8/1/public/full?alt=json",
 	    pokemons: []
 	}
     }
 
     componentDidMount() {
-	return fetch(this.state.spreadsheet_url)
+	fetch("/api/pokemons", {
+	    method: "GET",
+	    headers: {"Accept": "application/json"}
+	})
         .then(r => r.json())
-      	.then(json => json.feed.entry)
-      	.then(jsonPokemons => {
-            const pokemons = jsonPokemons.map(jsonPokemon => {
-            	return {
-            	    "id": jsonPokemon['gsx$id']['$t'],
-           	    "nom": jsonPokemon['gsx$nom']['$t'],
-		    "type": jsonPokemon['gsx$type']['$t'].split(",")
-          	}
-        });
-        this.setState({pokemons: pokemons.sort((a, b) => a.id - b.id)});
-      });
+      	.then(pokemons => {
+	    this.setState({pokemons});
+	});
     }
 
     render() {
